@@ -37,4 +37,4 @@ Snelle en handige planner voor POR gesprekken. Genereert een .csv bestand die je
 
     - Run the site through your local Webserver (XAMPP/Laragon)
        
-        - Open http://localhost/grinningkobold (XAMPP) or http://grinningkobold.test (Laragon) in your browser.,
+        - Open http://localhost/por-planner (XAMPP) or http://por-planner.test (Laragon) in your browser.,
