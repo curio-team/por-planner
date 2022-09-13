@@ -68,21 +68,25 @@ class PlannerController extends Controller
 
         // Construct dates that are excepted for the selected weekdays
         $dateExceptions = [];
-        foreach($request->dateExceptionList as $dateException){
-            // if there are two dates, split by -
-            if(strpos($dateException, ' - ') !== false){
-                $dates = explode(' - ', $dateException);
-                $startDate = Carbon::createFromFormat('d-m-Y', $dates[0]);
-                $endDate = Carbon::createFromFormat('d-m-Y', $dates[1]);
-            } else {
-                $startDate = $endDate = Carbon::createFromFormat('d-m-Y', $dateException);
+        if($request->dateExceptionList){
+            foreach ($request->dateExceptionList as $dateException) {
+                // if there are two dates, split by -
+                if (strpos($dateException, ' - ') !== false) {
+                    $dates = explode(' - ', $dateException);
+                    $startDate = Carbon::createFromFormat('d-m-Y', $dates[0]);
+                    $endDate = Carbon::createFromFormat('d-m-Y', $dates[1]);
+                } else {
+                    $startDate = $endDate = Carbon::createFromFormat('d-m-Y', $dateException);
+                }
+                $dateExceptions[] = [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                ];
             }
-            $dateExceptions[] = [
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-            ];
+        } else {
+            $dateExceptions = null;
         }
-
+        
         // Construct the first date to plan
         $currentDate = $this->nextSelectedWeekday(Carbon::createFromFormat('Y-m-d',  $request->startDate), $selectedWeekdays, $dateExceptions);
         $currentDate = $currentDate->hour($selectedWeekdays[$currentDate->format('l')]['startHour'])->minute($selectedWeekdays[$currentDate->format('l')]['startMinute']);
@@ -122,7 +126,7 @@ class PlannerController extends Controller
         if(!array_key_exists($currentDate->format('l'), $selectedWeekdays)){
             // If not, find the next selected weekday
             $currentDate = $this->nextSelectedWeekday($currentDate->addDays(1), $selectedWeekdays, $dateExceptions);
-        } else {
+        } elseif($dateExceptions) {
             // If yes, check if the currentDate is in the dateExceptions
             foreach($dateExceptions as $dateException){
                 if($currentDate->startOfDay()->between($dateException['startDate'], $dateException['endDate'])){
