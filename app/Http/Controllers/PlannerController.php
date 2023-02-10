@@ -86,7 +86,7 @@ class PlannerController extends Controller
         } else {
             $dateExceptions = null;
         }
-        
+
         // Construct the first date to plan
         $currentDate = $this->nextSelectedWeekday(Carbon::createFromFormat('Y-m-d',  $request->startDate), $selectedWeekdays, $dateExceptions);
         $currentDate = $currentDate->hour($selectedWeekdays[$currentDate->format('l')]['startHour'])->minute($selectedWeekdays[$currentDate->format('l')]['startMinute']);
@@ -129,7 +129,7 @@ class PlannerController extends Controller
         } elseif($dateExceptions) {
             // If yes, check if the currentDate is in the dateExceptions
             foreach($dateExceptions as $dateException){
-                if($currentDate->startOfDay()->between($dateException['startDate'], $dateException['endDate'])){
+                if($currentDate->startOfDay()->between($dateException['startDate']->startOfDay(), $dateException['endDate']->startOfDay())){
                     // If yes, find the next selected weekday
                     $currentDate = $this->nextSelectedWeekday($currentDate->addDays(1), $selectedWeekdays, $dateExceptions);
                 }
@@ -148,7 +148,7 @@ class PlannerController extends Controller
 
         // Create the CSV file and write the header
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['date','time','student'], ';');
+        fputcsv($output, ['Datum','Tijd','Student'], ';');
 
         // Loop through all the planned dates, and put them in the CSV file
         foreach ($planner as $row) {
