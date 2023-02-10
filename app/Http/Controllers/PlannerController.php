@@ -79,8 +79,8 @@ class PlannerController extends Controller
                     $startDate = $endDate = Carbon::createFromFormat('d-m-Y', $dateException);
                 }
                 $dateExceptions[] = [
-                    'startDate' => $startDate,
-                    'endDate' => $endDate,
+                    'startDate' => $startDate->startOfDay(),
+                    'endDate' => $endDate->endOfDay(),
                 ];
             }
         } else {
@@ -129,7 +129,7 @@ class PlannerController extends Controller
         } elseif($dateExceptions) {
             // If yes, check if the currentDate is in the dateExceptions
             foreach($dateExceptions as $dateException){
-                if($currentDate->startOfDay()->between($dateException['startDate']->startOfDay(), $dateException['endDate']->startOfDay())){
+                if($currentDate->startOfDay()->between($dateException['startDate'], $dateException['endDate'])){
                     // If yes, find the next selected weekday
                     $currentDate = $this->nextSelectedWeekday($currentDate->addDays(1), $selectedWeekdays, $dateExceptions);
                 }
