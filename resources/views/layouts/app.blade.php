@@ -28,34 +28,19 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                    </ul>
-                </div>
             </div>
         </nav>
 
         <main class="py-4">
             <div class="flash-message">
                 @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-                  @if(Session::has('alert-' . $msg))
-                  @foreach (Session::get('alert-' . $msg) as $message)
-                    <p class="mx-4 alert alert-{{ $msg }}">{{ $message }}</p>
-                  @endforeach
-                  @endif
+                    @if(Session::has('alert-' . $msg))
+                    @foreach (Session::get('alert-' . $msg) as $message)
+                        <p class="mx-4 alert alert-{{ $msg }}">{{ $message }}</p>
+                    @endforeach
+                    @endif
                 @endforeach
-              </div>
+            </div>
             @yield('content')
         </main>
     </div>
