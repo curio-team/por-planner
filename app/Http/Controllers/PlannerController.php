@@ -98,7 +98,7 @@ class PlannerController extends Controller
             $planner[] = [
                 self::WEEKDAYS[$currentDate->format('l')] .' '. $currentDate->format('d-m-Y'),
                 $currentDate->format('H:i'),
-                utf8_decode($student),
+                mb_convert_encoding($student, 'ISO-8859-1', 'UTF-8'),
             ];
             $currentDate = $this->nextTimeSlot($currentDate, $request->interval, $selectedWeekdays, $dateExceptions);
         }

@@ -10,8 +10,8 @@
                     <div class="mb-3 row">
                         <div class="col">
                             <label for="startDate" class="form-label">Startdatum:</label>
-                            <div class="ms-3">    
-                                <input type="date" class="form-control" id="startDate" name="startDate" value="{{ array_key_exists('startDate', $formData) ? $formData['startDate'] : '' }}">
+                            <div class="ms-3">
+                                <input type="date" class="form-control" id="startDate" name="startDate" value="{{ array_key_exists('startDate', $formData) ? $formData['startDate'] : '' }}" required>
                             </div>
                         </div>
                         <div class="col"></div>
@@ -39,8 +39,8 @@
                                 <p class="mb-0">{{ $weekdag }}:</p>
                                 <div class="ms-3">
                                     <label class="form-label" for="startTime{{ $weekday }}">Starttijd:</label>
-                                    <div class="ms-3"> 
-                                        <div class="col d-flex justify-between">  
+                                    <div class="ms-3">
+                                        <div class="col d-flex justify-between">
                                             <select class="form-select" id="startHour{{ $weekday }}" name="startHour{{ $weekday }}" {{ array_key_exists($weekday, $formData) ? '' : 'disabled' }}- onchange="{{ $weekday }}TimeCheck()">
                                                 @php array_key_exists($weekday, $formData) ? $startHour = $formData['startHour'.$weekday] : $startHour = '' @endphp
                                                 <option value="8" {{ $startHour == "8" ? 'selected' : '' }}>8</option>
@@ -67,8 +67,8 @@
                                 </div>
                                 <div class="ms-3">
                                     <label class="form-label" for="endTime{{ $weekday }}">Eindtijd:</label>
-                                    <div class="ms-3"> 
-                                        <div class="col d-flex justify-between">  
+                                    <div class="ms-3">
+                                        <div class="col d-flex justify-between">
                                             <select class="form-select" id="endHour{{ $weekday }}" name="endHour{{ $weekday }}" {{ array_key_exists($weekday, $formData) ? '' : 'disabled' }} onchange="{{ $weekday }}TimeCheck()">
                                                 @php array_key_exists($weekday, $formData) ? $endHour = $formData['endHour'.$weekday] : $endHour = '' @endphp
                                                 <option value="8" {{ $endHour == "8" ? 'selected' : '' }}>8</option>
@@ -103,8 +103,8 @@
                         <div class="col">
                             <div class="mb-2">
                                 <label for="interval" class="form-label">Lengte Gesprekken:</label>
-                                <div class="ms-3 col"> 
-                                    <div class="d-flex justify-between">  
+                                <div class="ms-3 col">
+                                    <div class="d-flex justify-between">
                                         <select class="form-select" id="interval" name="interval">
                                             @php array_key_exists('interval', $formData) ? $interval = $formData['interval'] : $interval = '' @endphp
                                             <option value="10" {{ $interval == "10" ? 'selected' : '' }}>10</option>
@@ -127,7 +127,7 @@
                         <div class="col">
                             <div class="mb-2">
                                 <label for="studentName" class="form-label">Student:</label>
-                                <div class="ms-3">    
+                                <div class="ms-3">
                                     <input type="text" class="form-control" id="studentName">
                                 </div>
                             </div>
@@ -148,8 +148,9 @@
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="button" class="btn btn-info" onclick="moveStudentUp()">&uarr;</button>
-                                <button type="button" class="btn btn-info ms-1" onclick="moveStudentUp()">&darr;</button>
+                                <button type="button" class="btn btn-info ms-1" onclick="moveStudentDown()">&darr;</button>
                                 <button type="button" class="btn btn-danger ms-1" onclick="removeStudentFromList()">Verwijderen</button>
+                                <button type="button" class="btn btn-success ms-1" onclick="randomizeStudentList()">Shuffle</button>
                             </div>
                         </div>
                     </div>
@@ -159,13 +160,13 @@
                         <div class="col">
                             <div class="mb-2">
                                 <label for="studentName" class="form-label">Datum uitzonderen van:</label>
-                                <div class="ms-3">    
+                                <div class="ms-3">
                                     <input type="date" class="form-control" id="dateExceptionFrom" onchange="copyDateFromTo()">
                                 </div>
                             </div>
                             <div class="mb-2">
                                 <label for="studentName" class="form-label">Datum uitzonderen tot:</label>
-                                <div class="ms-3">    
+                                <div class="ms-3">
                                     <input type="date" class="form-control" id="dateExceptionTo" onchange="checkDateExceptionTo()">
                                 </div>
                             </div>
@@ -189,7 +190,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <hr>
 
                     <div class="row">
