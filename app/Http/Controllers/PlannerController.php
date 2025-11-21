@@ -35,7 +35,7 @@ class PlannerController extends Controller
     public function processPlanner(Request $request) {
         $validationErrors = [];
         // Check if startDate filled in
-        if(!$request->startDate){
+        if(!$request->filled('startDate')){
             $validationErrors[] = 'Er is geen startdatum ingevuld.';
         }
 
@@ -52,12 +52,12 @@ class PlannerController extends Controller
             }
         }
         // then check if any weekday was selected at all
-        if(!$selectedWeekdays){
+        if(empty($selectedWeekdays)){
             $validationErrors[] = 'Er is geen weekdag geselecteerd.';
         }
 
         // Check if studentList filled in
-        if(!$request->studentList){
+        if(!$request->filled('studentList')){
             $validationErrors[] = 'Er is geen studentenlijst ingevuld.';
         }
 
@@ -71,16 +71,17 @@ class PlannerController extends Controller
         if($request->dateExceptionList){
             foreach ($request->dateExceptionList as $dateException) {
                 // if there are two dates, split by -
-                if (strpos($dateException, ' - ') !== false) {
+                if (str_contains($dateException, ' - ')) {
                     $dates = explode(' - ', $dateException);
-                    $startDate = Carbon::createFromFormat('d-m-Y', $dates[0]);
-                    $endDate = Carbon::createFromFormat('d-m-Y', $dates[1]);
+                    $startDate = Carbon::createFromFormat('d-m-Y', trim($dates[0]));
+                    $endDate = Carbon::createFromFormat('d-m-Y', trim($dates[1]));
                 } else {
-                    $startDate = $endDate = Carbon::createFromFormat('d-m-Y', $dateException);
+                    $startDate = Carbon::createFromFormat('d-m-Y', trim($dateException));
+                    $endDate = $startDate->copy();
                 }
                 $dateExceptions[] = [
-                    'startDate' => $startDate->startOfDay(),
-                    'endDate' => $endDate->endOfDay(),
+                    'startDate' => $startDate->copy()->startOfDay(),
+                    'endDate' => $endDate->copy()->endOfDay(),
                 ];
             }
         } else {
@@ -88,8 +89,8 @@ class PlannerController extends Controller
         }
 
         // Construct the first date to plan
-        $currentDate = $this->nextSelectedWeekday(Carbon::createFromFormat('Y-m-d',  $request->startDate), $selectedWeekdays, $dateExceptions);
-        $currentDate = $currentDate->hour($selectedWeekdays[$currentDate->format('l')]['startHour'])->minute($selectedWeekdays[$currentDate->format('l')]['startMinute']);
+        $currentDate = $this->nextSelectedWeekday(Carbon::createFromFormat('Y-m-d',  $request->startDate)->startOfDay(), $selectedWeekdays, $dateExceptions);
+        $currentDate = $currentDate->hour((int)$selectedWeekdays[$currentDate->format('l')]['startHour'])->minute((int)$selectedWeekdays[$currentDate->format('l')]['startMinute']);
 
         // Loop through all entered students, and assign a timeslot to each
         $planner = [];
@@ -108,14 +109,14 @@ class PlannerController extends Controller
 
     private function nextTimeSlot($currentDate, $interval, $selectedWeekdays, $dateExceptions){
         // go to the next time slot
-        $currentDate->addMinutes($interval);
+        $currentDate->addMinutes((int)$interval);
 
         // check if the current date does not exceed the end of the timeslot
         $currentDateEndTime = $currentDate->copy();
-        $currentDateEndTime = $currentDateEndTime->hour($selectedWeekdays[$currentDateEndTime->format('l')]['endHour'])->minute($selectedWeekdays[$currentDateEndTime->format('l')]['endMinute']);
+        $currentDateEndTime = $currentDateEndTime->hour((int)$selectedWeekdays[$currentDateEndTime->format('l')]['endHour'])->minute((int)$selectedWeekdays[$currentDateEndTime->format('l')]['endMinute']);
         if ($currentDate >= $currentDateEndTime) {
             // If the timeslot is over, go to the next weekday
-            $currentDate = $this->nextSelectedWeekday($currentDate->addDays(1), $selectedWeekdays, $dateExceptions);
+            $currentDate = $this->nextSelectedWeekday($currentDate->copy()->addDays(1)->startOfDay(), $selectedWeekdays, $dateExceptions);
         }
 
         return $currentDate;
@@ -125,20 +126,22 @@ class PlannerController extends Controller
         // Check if the day of currentDate is in the selectedWeekdays
         if(!array_key_exists($currentDate->format('l'), $selectedWeekdays)){
             // If not, find the next selected weekday
-            $currentDate = $this->nextSelectedWeekday($currentDate->addDays(1), $selectedWeekdays, $dateExceptions);
+            $currentDate = $this->nextSelectedWeekday($currentDate->copy()->addDays(1), $selectedWeekdays, $dateExceptions);
         } elseif($dateExceptions) {
             // If yes, check if the currentDate is in the dateExceptions
+            $checkDate = $currentDate->copy()->startOfDay();
             foreach($dateExceptions as $dateException){
-                if($currentDate->startOfDay()->between($dateException['startDate'], $dateException['endDate'])){
+                if($checkDate >= $dateException['startDate'] && $checkDate <= $dateException['endDate']){
                     // If yes, find the next selected weekday
-                    $currentDate = $this->nextSelectedWeekday($currentDate->addDays(1), $selectedWeekdays, $dateExceptions);
+                    $currentDate = $this->nextSelectedWeekday($currentDate->copy()->addDays(1), $selectedWeekdays, $dateExceptions);
+                    break;
                 }
             }
         }
 
         return $currentDate
-            ->hour($selectedWeekdays[$currentDate->format('l')]['startHour'])
-            ->minute($selectedWeekdays[$currentDate->format('l')]['startMinute']);
+            ->hour((int)$selectedWeekdays[$currentDate->format('l')]['startHour'])
+            ->minute((int)$selectedWeekdays[$currentDate->format('l')]['startMinute']);
     }
 
     private function downloadCSV($planner){
