@@ -20,18 +20,18 @@ LET OP: Dit programma gaat ervan uit dat het standaard scheidingsteken puntkomma
 ## Screenshot
 ![Imgur](https://i.imgur.com/IV7chn5.png)
 
-## How To Run (local only)
+## Lokaal Draaien
 
-- Make sure you have installed the following sofware:
+- Zorg ervoor dat je de volgende software hebt geïnstalleerd:
     - Git
     - Nodejs
-    - Composer (make sure PHP is added to the PATH variable)
-    - Optional:
-        - A webserver (like XAMPP or Laragon)
+    - Composer (zorg ervoor dat PHP is toegevoegd aan de PATH variabele)
+    - Optioneel:
+        - Een webserver (zoals Laragon of Herd)
 
-- Clone the repo
+- Clone de repository
 
-- Execute the following commands in the project root folder (using Git-Bash, or another terminal)
+- Voer de volgende commando's uit in de project root folder (met Git-Bash, of een andere terminal)
 
   `cp .example.env .env`
   
@@ -45,15 +45,15 @@ LET OP: Dit programma gaat ervan uit dat het standaard scheidingsteken puntkomma
 
   `npm run prod`
 
-- Do either one of the following:
-    - Run the site with artisan serve:
+- Doe één van de volgende opties:
+    - Draai de site met artisan serve:
 
-        - Execute the following command in the project root folder to deploy the site
+        - Voer het volgende commando uit in de project root folder om de site te deployen
     
             `php artisan serve`
     
-        - Then open http://127.0.0.1:8000 in your browser. (Note: if port 8000 is already in use, try `php artisan serve --port=8080` and open http://127.0.0.1:8080 in your browser instead.)
+        - Open vervolgens http://127.0.0.1:8000 in je browser. (Let op: als poort 8000 al in gebruik is, probeer dan `php artisan serve --port=8080` en open http://127.0.0.1:8080 in je browser.)
 
-    - Run the site through your local Webserver (XAMPP/Laragon)
+    - Draai de site via je lokale webserver (Laragon/Herd)
        
-        - Open http://localhost/por-planner (XAMPP) or http://por-planner.test (Laragon) in your browser.,
+        - Open http://por-planner.test in je browser.
